@@ -1,0 +1,9 @@
+{
+  "name": "tejghea",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tejghea landing page with AI chat widget",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0"
+  }
+}

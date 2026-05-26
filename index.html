@@ -1172,6 +1172,7 @@
         <a href="#piloni">Produs</a>
         <a href="#pachete">Pachete</a>
         <a href="#calc-section">Calculator</a>
+        <a href="#chat-section">Asistent</a>
       </div>
     </nav>
   </div>
@@ -1734,6 +1735,201 @@
     </div>
   </div>
 </section>
+
+<!-- ============ AI CHAT WIDGET ============ -->
+<section id="chat-section" class="section">
+  <div class="section-header">
+    <div class="section-label">09 · Asistent virtual</div>
+    <div>
+      <h2 class="section-title">Ai întrebări despre ofertă?</h2>
+      <p class="section-sub">Asistentul nostru virtual îți răspunde instant.</p>
+    </div>
+  </div>
+
+  <div class="chat-wrap">
+    <div class="chat-window" id="chat-window" role="log" aria-live="polite" aria-label="Conversație asistent virtual"></div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Scrie întrebarea ta…" required maxlength="2000" aria-label="Mesajul tău">
+      <button type="submit" class="chat-send" id="chat-send" aria-label="Trimite mesajul">
+        <span class="chat-send-label">Trimite</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<style>
+  /* ============ CHAT WIDGET ============ */
+  .chat-wrap {
+    max-width: 760px;
+    margin: 2.5rem auto 0;
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 40px -20px rgba(44, 44, 44, 0.15);
+  }
+  .chat-window {
+    min-height: 280px;
+    max-height: 460px;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .chat-msg {
+    max-width: 85%;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .chat-msg.bot {
+    align-self: flex-start;
+    background: var(--paper-card);
+    color: var(--ink);
+    border: 1px solid var(--line-soft);
+    border-top-left-radius: 4px;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--orange);
+    color: #fff;
+    border-top-right-radius: 4px;
+  }
+  .chat-msg.typing {
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+  .chat-msg.typing::after {
+    content: '…';
+    animation: chat-dots 1.2s steps(4, end) infinite;
+  }
+  @keyframes chat-dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '…'; }
+  }
+  .chat-form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--paper-card);
+  }
+  .chat-input {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .chat-input:focus {
+    border-color: var(--orange);
+    background: var(--paper-card);
+  }
+  .chat-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .chat-send {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+    min-width: 92px;
+  }
+  .chat-send:hover { background: #e68613; }
+  .chat-send:active { transform: scale(0.98); }
+  .chat-send:disabled {
+    background: var(--line);
+    color: var(--ink-mute);
+    cursor: not-allowed;
+  }
+  @media (max-width: 640px) {
+    .chat-wrap { margin: 2rem 0 0; }
+    .chat-window { padding: 1rem; min-height: 240px; }
+    .chat-send { min-width: 72px; padding: 0 1rem; }
+    .chat-send-label { font-size: 0.9rem; }
+  }
+</style>
+
+<script>
+  (function () {
+    const chatWindow = document.getElementById('chat-window');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+
+    if (!chatWindow || !chatForm) return;
+
+    const INITIAL_MESSAGE = 'Bună! Sunt asistentul virtual Tejghea. Cum te pot ajuta cu oferta noastră?';
+
+    function appendMessage(role, text, extraClass) {
+      const el = document.createElement('div');
+      el.className = 'chat-msg ' + role + (extraClass ? ' ' + extraClass : '');
+      el.textContent = text;
+      chatWindow.appendChild(el);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+      return el;
+    }
+
+    appendMessage('bot', INITIAL_MESSAGE);
+
+    async function sendMessage(message) {
+      chatInput.disabled = true;
+      chatSend.disabled = true;
+      appendMessage('user', message);
+      const typing = appendMessage('bot', 'Scrie', 'typing');
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message }),
+        });
+        const data = await res.json().catch(() => ({}));
+        typing.remove();
+        if (!res.ok) {
+          appendMessage('bot', data.error ? 'Eroare: ' + data.error : 'A apărut o eroare. Încearcă din nou într-un minut.');
+        } else {
+          appendMessage('bot', data.reply || 'Nu am primit un răspuns. Încearcă din nou.');
+        }
+      } catch (err) {
+        typing.remove();
+        appendMessage('bot', 'Conexiune întreruptă. Verifică internetul și încearcă din nou.');
+      } finally {
+        chatInput.disabled = false;
+        chatSend.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    chatForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const value = chatInput.value.trim();
+      if (!value) return;
+      chatInput.value = '';
+      sendMessage(value);
+    });
+  })();
+</script>
 
 <!-- ============ FOOTER ============ -->
 <footer>
