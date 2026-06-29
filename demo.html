@@ -17,14 +17,16 @@
 <meta property="og:title" content="[Numele Magazinului] · [Categorie], [Oraș]">
 <meta property="og:description" content="[Descriere scurtă a magazinului tău pentru social sharing — 1 propoziție, max 160 caractere]">
 <meta property="og:url" content="https://tejghea.ro/[oras]/[complex]/[magazinul-tau]">
-<meta property="og:image" content="https://gomagcdn.ro/domains3/ladymania.ro/files/banner/whatsapp-image-2026-05-05-at-06-05-358069.jpeg">
+<meta property="og:image" content="https://tejghea.ro/images/hero-polkadot.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="ro_RO">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="[Numele Magazinului] · [Categorie], [Oraș]">
 <meta name="twitter:description" content="[Descriere pentru Twitter card — max 100 caractere]">
-<meta name="twitter:image" content="https://gomagcdn.ro/domains3/ladymania.ro/files/banner/whatsapp-image-2026-05-05-at-06-05-358069.jpeg">
+<meta name="twitter:image" content="https://tejghea.ro/images/hero-polkadot.jpg">
 
 <!-- Favicon SVG (Lady Mania monogram L) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232C2C2C'/%3E%3Ctext x='50' y='72' font-family='Georgia,serif' font-style='italic' font-size='70' font-weight='600' fill='%23FAFAF7' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
@@ -233,7 +235,7 @@ button, a.btn, .float-btn, .nav-pill, .product-action, .leave-review-btn,
   font-size: 21px;
   letter-spacing: -0.03em;
   color: var(--ink);
-  display: none;
+  display: inline-block;
 }
 .tejghea-wordmark .dot { color: var(--orange); }
 .breadcrumb {
@@ -559,18 +561,19 @@ button, a.btn, .float-btn, .nav-pill, .product-action, .leave-review-btn,
   font-size: 14px;
   color: var(--ink);
   line-height: 1.5;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  display: block;
+  position: relative;
+  padding-left: 16px;
 }
 .despre-bullets li::before {
   content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
   width: 5px;
   height: 5px;
   background: var(--ink);
   border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 8px;
 }
 .despre-bullets li strong { font-weight: 700; }
 
